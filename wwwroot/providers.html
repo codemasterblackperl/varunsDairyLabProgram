@@ -11,7 +11,7 @@
     <script src="./js/jquery-3.3.1.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/bootstrap.bundle.min.js"></script>
-    <script src="js/bootstrap-table.min.js"></script>
+    <script src="./js/bootstrap-table.min.js"></script>
   </head>
   <body onload="loadProvider()">
     <header class="card"><h1 class="text-center">Dairy Manager v1</h1></header>
@@ -30,8 +30,13 @@
         <div class="col-md-3"></div>
       </div>
       <br />
-      <div class=" card table-responsive">
-        <table id="tblProvider" class="table table-striped">
+      <div style="padding: 1rem" class="card">
+        <table
+          id="tblProvider"
+          data-pagination="true"
+          data-search="true"
+          class="table table-hover table-bordered"
+        >
           <thead>
             <th data-field="PID">Provider ID</th>
             <th data-field="Name">Name</th>
@@ -39,6 +44,7 @@
             <th data-field="Address">Address</th>
             <th data-field="Contact_no">Contact Number</th>
             <th data-field="Aadhar_card">Aadhar Card Number</th>
+            <th></th>
           </thead>
         </table>
       </div>
@@ -46,19 +52,45 @@
   </body>
   <script>
     async function loadProvider() {
-      $.getJSON("http://localhost:30000/api/providers", function(data, status) {
+      $.getJSON("http://localhost:30000/api/providers/show", function(
+        data,
+        status
+      ) {
         if (status == "success") {
           if (data == null) {
             console.log("No records found")
           } else {
-            $("#tblProvider").bootstrapTable({
-              data: data
+            let tbody = "<tbody>"
+            $.each(data.queryResult, function(key, value) {
+              tbody += "<tr>"
+              tbody += "<td>" + value.PID + "</td>"
+              tbody += "<td>" + value.Name + "</td>"
+              tbody += "<td>" + value.DOB + "</td>"
+              tbody += "<td>" + value.Address + "</td>"
+              tbody += "<td>" + value.Contact_no + "</td>"
+              tbody += "<td>" + value.Aadhar_card + "</td>"
+              tbody +=
+                "<td><a class='btn' role='button' onclick='delProvider(" +
+                value.PID +
+                ")'>Delete</a></td>"
+              tbody += "</tr>"
             })
+            tbody += "</tbody>"
+            $("#tblProvider").append(tbody)
+            // $("#tblProvider").bootstrapTable({
+            //   data: data.queryResult
+            // })
           }
         } else {
           alert("unable to load the data")
         }
       })
+    }
+    async function delProvider(id) {
+      var res = confirm("Do you wish to delete this row")
+      if (res == true) {
+        window.location.reload()
+      }
     }
   </script>
 </html>
