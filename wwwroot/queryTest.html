@@ -1,0 +1,99 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dairy Manager</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-grid.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="./css/mystyle.css" />
+    <script src="./js/jquery-3.3.1.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap-table.min.js"></script>
+  </head>
+  <body>
+    <header class="card"><h1 class="text-center">Dairy Manager v1</h1></header>
+    <div class="container-fluid">
+      <br />
+      <div class="row">
+        <div class="col-md-3">
+          <a
+            href="index.html"
+            role="button"
+            class="btn btn-outline-primary my-btn"
+            >Back</a
+          >
+        </div>
+        <div class="col-md-6"><h4 class="text-center">Query Tester</h4></div>
+        <div class="col-md-3"></div>
+      </div>
+      <br />
+      <div class="card" style="padding: 2%;">
+        <div class="form-group">
+          <label>Enter Query:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="txtQuery"
+            value="select * from provider"
+          />
+        </div>
+        <button
+          class="btn btn-outline-success"
+          type="button"
+          id="btnSearch"
+          onclick="search()"
+        >
+          Search
+        </button>
+      </div>
+      <br />
+      <div id="tblContainer" class="card">
+        <table id="tblProvider" class="table table-striped"></table>
+      </div>
+    </div>
+  </body>
+  <script>
+    async function search() {
+      $("#btnSearch").attr("disabled", "disabled")
+      const query = $("#txtQuery").val()
+      searchData("query=" + query)
+    }
+    async function searchData(query) {
+      $.getJSON("http://localhost:30000/api/queryTest?" + query, function(
+        data,
+        status
+      ) {
+        if (status == "success") {
+          if (data == null) {
+            console.log("No records found")
+          } else {
+            // $("#tblProvider").bootstrapTable({
+            //   data: data
+            // })
+            poppulateData(data)
+          }
+        } else {
+          alert("unable to load the data")
+        }
+      })
+    }
+    async function poppulateData(data) {
+      $("#tblContainer").empty()
+      let table = "<table id='tblProvider' class='table table-striped'>"
+      table += "<thead>"
+      $.each(data[0], function(key, value) {
+        table += "<th data-field=" + key + ">" + key + "</th>"
+      })
+      table += "</thead></table>"
+      $("#tblContainer").append(table)
+      //$("#tblProvider").append(thead)
+      $("#tblProvider").bootstrapTable({
+        data: data
+      })
+      $("#btnSearch").removeAttr("disabled")
+    }
+  </script>
+</html>
