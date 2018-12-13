@@ -1,9 +1,10 @@
 const http = require("http")
 const express = require("express")
 const webServerConfig = require("./config/web-server.js")
-const database = require("./services/database.js")
+//const database = require("./services/database.js")
 const router = require("./services/router.js")
 const path = require("path")
+const bodyParser = require("body-parser")
 
 let httpServer
 
@@ -23,6 +24,9 @@ function initialize() {
       )
       next()
     })
+
+    app.use(bodyParser.json()) // support json encoded bodies
+    app.use(bodyParser.urlencoded({ extended: true })) // support encoded bodies
 
     app.use("/api", router)
 

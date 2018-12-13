@@ -46,7 +46,7 @@
           id="btnSearch"
           onclick="search()"
         >
-          Search
+          Execute
         </button>
       </div>
       <br />
@@ -59,10 +59,12 @@
     async function search() {
       $("#btnSearch").attr("disabled", "disabled")
       const query = $("#txtQuery").val()
+
       searchData("query=" + query)
+      $("#btnSearch").removeAttr("disabled")
     }
     async function searchData(query) {
-      $.getJSON("http://localhost:30000/api/queryTest?" + query, function(
+      $.post("http://localhost:30000/api/queryTest", query, function(
         data,
         status
       ) {
@@ -79,6 +81,23 @@
           alert("unable to load the data")
         }
       })
+      //   $.getJSON("http://localhost:30000/api/queryTest?" + query, function(
+      //     data,
+      //     status
+      //   ) {
+      //     if (status == "success") {
+      //       if (data == null) {
+      //         console.log("No records found")
+      //       } else {
+      //         // $("#tblProvider").bootstrapTable({
+      //         //   data: data
+      //         // })
+      //         poppulateData(data)
+      //       }
+      //     } else {
+      //       alert("unable to load the data")
+      //     }
+      // })
     }
     async function poppulateData(data) {
       $("#tblContainer").empty()
@@ -93,7 +112,6 @@
       $("#tblProvider").bootstrapTable({
         data: data
       })
-      $("#btnSearch").removeAttr("disabled")
     }
   </script>
 </html>
